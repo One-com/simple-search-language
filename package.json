@@ -1,0 +1,32 @@
+{
+  "name": "simple-search-language",
+  "description": "Complex search string parser.",
+  "version": "0.0.0",
+  "main": "./lib/processSearch.js",
+  "scripts": {
+    "coverage": "nyc --reporter=lcov --reporter=text npm test",
+    "lint": "eslint . && prettier --check '**/*.js'",
+    "test": "mocha"
+  },
+  "keywords": [],
+  "author": "Alex J Burke @alexjeffburke <ajb@one.com>",
+  "repository": "git://github.com/One-com/simple-search-language",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    "unicoderegexp": "0.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^6.3.0",
+    "eslint-config-prettier": "^6.2.0",
+    "eslint-config-pretty-standard": "^3.0.1",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.2.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-standard": "^4.0.1",
+    "mocha": "^6.2.2",
+    "nyc": "^14.1.1",
+    "prettier": "~1.19.1",
+    "unexpected": "^10.38.0"
+  }
+}
