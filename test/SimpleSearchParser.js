@@ -2,9 +2,18 @@ var expect = require('unexpected');
 
 var SimpleSearchParser = require('../lib/SimpleSearchParser');
 
+var testLabels = ['from', 'somelabel', 'otherlabel'];
+
 function test(input, output, options) {
   it('should parse: ' + input, function() {
-    expect(new SimpleSearchParser(options).parse(input), 'to equal', output);
+    expect(
+      new SimpleSearchParser({
+        ...options,
+        labels: testLabels
+      }).parse(input),
+      'to equal',
+      output
+    );
   });
 }
 
@@ -153,24 +162,25 @@ describe('SimpleSearchParser', function() {
     ['LITERAL', 'TEXT', 'here']
   ]);
   // Labels
-  test('subject: quux', ['LITERAL', 'SUBJECT', 'quux']);
   test('from: quux', ['LITERAL', 'FROM', 'quux']);
-  test('to: quux', ['LITERAL', 'TO', 'quux']);
-  test('cc: quux', ['LITERAL', 'CC', 'quux']);
-  test('bcc: quux', ['LITERAL', 'BCC', 'quux']);
-  test('body: quux', ['LITERAL', 'BODY', 'quux']);
+  test('somelabel: quux', ['LITERAL', 'SOMELABEL', 'quux']);
+  test('otherlabel: quux', ['LITERAL', 'OTHERLABEL', 'quux']);
   // Labels (complex)
-  test('to: this is for goo', [
+  test('from: this is for goo', [
     'LIST',
-    ['LITERAL', 'TO', 'this'],
+    ['LITERAL', 'FROM', 'this'],
     ['LITERAL', 'TEXT', 'is'],
     ['LITERAL', 'TEXT', 'for'],
     ['LITERAL', 'TEXT', 'goo']
   ]);
-  test('from: "mr. quoted foo"', ['LITERAL', 'FROM', 'mr. quoted foo']);
-  test('subject: nukes from: "mr. quoted foo" eggs', [
+  test('somelabel: "mr. quoted foo"', [
+    'LITERAL',
+    'SOMELABEL',
+    'mr. quoted foo'
+  ]);
+  test('otherlabel: nukes from: "mr. quoted foo" eggs', [
     'LIST',
-    ['LITERAL', 'SUBJECT', 'nukes'],
+    ['LITERAL', 'OTHERLABEL', 'nukes'],
     ['LITERAL', 'FROM', 'mr. quoted foo'],
     ['LITERAL', 'TEXT', 'eggs']
   ]);
@@ -187,7 +197,7 @@ describe('SimpleSearchParser', function() {
       function() {
         expect(
           () => {
-            new SimpleSearchParser().parse(subject);
+            new SimpleSearchParser({ labels: testLabels }).parse(subject);
           },
           'to throw',
           expect

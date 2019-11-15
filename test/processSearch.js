@@ -1,7 +1,12 @@
 var expect = require('unexpected');
 
-var processSearch = require('../lib/processSearch');
+var createProcessSearch = require('../lib/processSearch');
 var testWriter = require('../lib/writers/test');
+
+var testLabels = ['from', 'to', 'cc', 'bcc'];
+var processSearch = createProcessSearch({
+  labels: testLabels
+});
 
 function createTestUsingWriter(writer) {
   return function test(searchString, expected) {
@@ -21,34 +26,66 @@ const shouldOutputFor = (subject, value) => [
 ];
 
 describe('processSearch', function() {
-  it('should throw with no search phrase', () => {
+  it('should throw when no labels are supplied', () => {
     expect(
       () => {
-        processSearch();
+        createProcessSearch();
       },
       'to throw',
-      'missing search phrase'
+      'missing labels'
     );
   });
 
-  it('should throw with no specified outputter', () => {
+  it('should throw when an empty labels array is supplied', () => {
     expect(
       () => {
-        processSearch('');
+        createProcessSearch({ labels: [] });
       },
       'to throw',
-      'outputter function not supplied'
+      'missing labels'
     );
   });
 
-  it('should throw if the format does not exist', () => {
+  it('should throw when invalid labels are supplied', () => {
     expect(
       () => {
-        processSearch('', { format: 'random' });
+        createProcessSearch({ labels: ['label0'] });
       },
       'to throw',
-      'unsupported format "random"'
+      'invalid label (must be a-z lower case with no spaces)'
     );
+  });
+
+  describe('when configured with labels', () => {
+    it('should throw with no search phrase', () => {
+      expect(
+        () => {
+          processSearch();
+        },
+        'to throw',
+        'missing search phrase'
+      );
+    });
+
+    it('should throw with no specified outputter', () => {
+      expect(
+        () => {
+          processSearch('');
+        },
+        'to throw',
+        'outputter function not supplied'
+      );
+    });
+
+    it('should throw if the format does not exist', () => {
+      expect(
+        () => {
+          processSearch('', { format: 'random' });
+        },
+        'to throw',
+        'unsupported format "random"'
+      );
+    });
   });
 
   describe('when a post parsing conversion funciton is provided', () => {
@@ -170,8 +207,8 @@ describe('processSearch', function() {
     );
     test('from: "mr. quoted foo"', 'FROM {14+}\r\nmr. quoted foo');
     test(
-      'subject: nukes from: "mr. quoted foo" eggs',
-      '(SUBJECT {5+}\r\nnukes FROM {14+}\r\nmr. quoted foo TEXT {4+}\r\neggs)'
+      'from: nukes from: "mr. quoted foo" eggs',
+      '(FROM {5+}\r\nnukes FROM {14+}\r\nmr. quoted foo TEXT {4+}\r\neggs)'
     );
     test('notalabel: bingo', '(TEXT {10+}\r\nnotalabel: TEXT {5+}\r\nbingo)');
 
@@ -312,25 +349,25 @@ describe('processSearch', function() {
       ]
     });
 
-    test('Some foo to: moo@bar.com subject: It is time', {
+    test('Some foo to: moo@bar.com cc: It is time', {
       name: 'LIST',
       children: [
         { name: 'TEXT', attributes: { value: 'Some' } },
         { name: 'TEXT', attributes: { value: 'foo' } },
         { name: 'TO', attributes: { value: 'moo@bar.com' } },
-        { name: 'SUBJECT', attributes: { value: 'It' } },
+        { name: 'CC', attributes: { value: 'It' } },
         { name: 'TEXT', attributes: { value: 'is' } },
         { name: 'TEXT', attributes: { value: 'time' } }
       ]
     });
 
-    test('Some foo to: moo@bar.com subject: "It is time"', {
+    test('Some foo to: moo@bar.com cc: "It is time"', {
       name: 'LIST',
       children: [
         { name: 'TEXT', attributes: { value: 'Some' } },
         { name: 'TEXT', attributes: { value: 'foo' } },
         { name: 'TO', attributes: { value: 'moo@bar.com' } },
-        { name: 'SUBJECT', attributes: { value: 'It is time' } }
+        { name: 'CC', attributes: { value: 'It is time' } }
       ]
     });
   });
