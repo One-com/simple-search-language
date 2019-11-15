@@ -56,6 +56,16 @@ describe('processSearch', function() {
     );
   });
 
+  it('should throw on an attempt to include the label "text"', () => {
+    expect(
+      () => {
+        createProcessSearch({ labels: ['text'] });
+      },
+      'to throw',
+      'invalid label ("text" is not an allowed label)'
+    );
+  });
+
   describe('when configured with labels', () => {
     it('should throw with no search phrase', () => {
       expect(
