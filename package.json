@@ -1,7 +1,7 @@
 {
   "name": "simple-search-language",
   "description": "Complex search string parser.",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "main": "./lib/processSearch.js",
   "files": [
     "lib"
